@@ -38,7 +38,8 @@ class BaseClientHelper {
   dynamic _processResponse(http.Response response) {
     switch (response.statusCode) {
       case 200:
-        var responseJson = utf8.decode(response.bodyBytes);
+      case 201:
+        var responseJson = response.body;
         return responseJson;
       case 400:
         throw BadRequestException(

@@ -28,8 +28,17 @@ class HomeScreen extends StatelessWidget {
                       var user = homeScreenController.usersList[index];
                       return Card(
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(user),
+                          padding: EdgeInsets.all(16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(user),
+                              ElevatedButton(
+                                onPressed: () {},
+                                child: Text('Click'),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     }),

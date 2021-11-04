@@ -14,10 +14,10 @@ class APIController with ExceptionController {
   Future<dynamic> postSampleData() async {
     var payload = {"name": "sample"};
     var response = await BaseClientHelper()
-        .post('todos/1', payload)
+        .post('posts', payload)
         .catchError(handleError);
-    if (response == null) return;
+    if (response == null) return null;
     print(response);
-    return sampleModelFromJson(response);
+    return response;
   }
 }

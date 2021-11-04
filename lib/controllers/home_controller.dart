@@ -11,21 +11,6 @@ class HomeController extends GetxController {
     "sample 1",
     "sample 2",
     "sample 3",
-    "sample 1",
-    "sample 2",
-    "sample 3",
-    "sample 1",
-    "sample 2",
-    "sample 3",
-    "sample 1",
-    "sample 2",
-    "sample 3",
-    "sample 1",
-    "sample 2",
-    "sample 3",
-    "sample 1",
-    "sample 2",
-    "sample 3"
   ];
 
   @override
@@ -35,9 +20,7 @@ class HomeController extends GetxController {
   }
 
   _getInfo() async {
-    SampleModel response = await apiController.getSampleData();
-    label(response.title);
-
-    print('came here');
+    var response = await apiController.postSampleData();
+    print(response);
   }
 }
