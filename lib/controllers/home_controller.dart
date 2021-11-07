@@ -1,26 +1,30 @@
-import 'package:general/controllers/api_controller.dart';
-import 'package:general/models/sample_model.dart';
+import 'package:general/database/database_helper.dart';
+import 'package:general/models/model_task.dart';
 import 'package:get/get.dart';
-import 'dart:convert';
+
+DatabaseHelper databaseHelper = DatabaseHelper.instance;
 
 class HomeController extends GetxController {
-  final apiController = APIController();
-  RxString label = "".obs;
-
-  List<String> usersList = [
-    "sample 1",
-    "sample 2",
-    "sample 3",
-  ];
+  List<ModelTask> tasks = <ModelTask>[].obs;
 
   @override
   void onInit() {
-    _getInfo();
+    getTasks();
     super.onInit();
   }
 
-  _getInfo() async {
-    var response = await apiController.postSampleData();
-    print(response);
+  addTask() {
+    ModelTask modelTask = ModelTask(
+        title: 'title', description: 'description', dueDate: '07-09-2021');
+
+    databaseHelper.insertTask(modelTask).then(
+          (value) => getTasks(),
+        );
+  }
+
+  getTasks() async {
+    tasks.assignAll(
+      await databaseHelper.getTasks(),
+    );
   }
 }
