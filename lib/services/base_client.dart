@@ -2,22 +2,30 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:general/services/exceptions.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+
+import 'exceptions.dart';
 
 class BaseClientHelper {
   String baseUrl = "https://jsonplaceholder.typicode.com/";
+
+  final Dio _dio = Dio(BaseOptions(
+    connectTimeout: 5000,
+    receiveTimeout: 20000,
+    contentType: Headers.jsonContentType,
+    receiveDataWhenStatusError: true,
+  ));
 
   //GET
   Future<dynamic> get(String api) async {
     Uri uri = Uri.parse(baseUrl + api);
     try {
-      var response = await http.get(uri);
+      var response = await _dio.get(uri.toString());
       return _processResponse(response);
     } on SocketException {
-      throw FetchDataException('Time out', uri.toString());
+      throw FetchDataException('FetchDataException', uri.toString());
     } on TimeoutException {
-      throw TimeOutException('Time', uri.toString());
+      throw TimeOutException('TimeOutException', uri.toString());
     }
   }
 
@@ -26,27 +34,28 @@ class BaseClientHelper {
     Uri uri = Uri.parse(baseUrl + api);
     var payloadObj = json.encode(payload);
     try {
-      var response = await http.post(uri, body: payloadObj);
+      var response = await _dio.post(uri.toString(), data: payloadObj);
       return _processResponse(response);
     } on SocketException {
-      throw FetchDataException('Something went wrong', uri.toString());
+      throw FetchDataException('FetchDataException', uri.toString());
     } on TimeoutException {
-      throw FetchDataException('Something went wrong', uri.toString());
+      throw TimeOutException('TimeOutException', uri.toString());
     }
   }
 
-  dynamic _processResponse(http.Response response) {
+  dynamic _processResponse(Response response) {
     switch (response.statusCode) {
       case 200:
       case 201:
-        var responseJson = response.body;
+        var responseJson = response.data;
         return responseJson;
       case 400:
         throw BadRequestException(
-            utf8.decode(response.bodyBytes), response.request!.url.toString());
+            response.statusMessage ?? 'Bad Request Exception',
+            response.requestOptions.path);
       default:
         throw FetchDataException('Error occurred with : ${response.statusCode}',
-            response.request!.url.toString());
+            response.requestOptions.path);
     }
   }
 }
